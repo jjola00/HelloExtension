@@ -4,8 +4,7 @@
     "version": "1.0",
     "permissions": ["activeTab", "scripting"],
     "background": {
-        "scripts": ["config.js", "background.js"],
-        "persistent": false
+        "service_worker": "background.js"
     },
     "action": {
         "default_popup": "popup.html",

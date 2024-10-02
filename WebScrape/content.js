@@ -1,22 +1,9 @@
-let textContent = document.body.innerText;
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'scrapeText') {
+        // Scrape all the text from the page
+        const textContent = document.body.innerText;
 
-function sendDataToGoogleSheet(text) {
-    // Send a POST request to the backend URL
-    fetch(backendURL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text: text })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Data sent to Google Sheet:', data);
-    })
-    .catch(error => {
-        console.error('Error sending data to Google Sheet:', error);
-    });
-}
-
-// Call the function to send the scraped text to the Google Sheet
-sendDataToGoogleSheet(textContent);
+        // Send the scraped text back to the background script to save it to Google Sheets
+        chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedText: textContent });
+    }
+});
