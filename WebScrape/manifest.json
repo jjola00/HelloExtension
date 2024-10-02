@@ -1,12 +1,23 @@
 {
     "manifest_version": 3,
     "name": "Web Scraper",
-    "description": "Scrapes the web for information",
     "version": "1.0",
+    "permissions": ["activeTab", "scripting"],
+    "background": {
+        "scripts": ["config.js", "background.js"],
+        "persistent": false
+    },
     "action": {
-        "default_icon": {
-            "default_popup": "popup.html",
-            "default_icon": "hi.png"
+        "default_popup": "popup.html",
+        "default_title": "My Extension"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js", "config.js"]
         }
-    }
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ]
   }

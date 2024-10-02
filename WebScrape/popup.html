@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scrape and Send</title>
+</head>
+<body>
+  <h1>Scrape Text</h1>
+  <button id="scrapeButton">Scrape and Send</button>
+
+  <script>
+    document.getElementById('scrapeButton').addEventListener('click', () => {
+      // this executes a script in the active tab
+      chrome.scripting.executeScript({
+        // this targets the active tab in the current window
+        target: { tabId: chrome.tabs.query({ active: true, currentWindow: true }) },
+        function: () => {
+          // this gets the text content of the entire page
+          let textContent = document.body.innerText;
+          
+          // Send the scraped text to the backend
+          fetch(backendURL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: textContent })
+          })
+          .then(response => response.json())
+          .then(data => console.log('Success:', data))
+          .catch(error => console.error('Error:', error));
+        }
+      });
+    });
+  </script>
+</body>
+</html>
