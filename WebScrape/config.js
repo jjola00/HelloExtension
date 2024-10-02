@@ -1,1 +1,0 @@
-const backendURL = 'https://script.google.com/macros/s/AKfycbzRwlOySrXXX1PMaoRSmZsAtQWJ0eKvE3wbpUfUa1Eake5s24hDVztHWlfcNNV9JXRC/exec';

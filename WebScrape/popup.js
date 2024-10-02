@@ -1,22 +1,24 @@
 document.getElementById('scrapeButton').addEventListener('click', async () => {
-    //gets the active tab in the current window
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    //inject script into the active tab to scrape the text
-    chrome.runtime.sendMessage({ action: 'scrapePage' });
+    // Get the active tab
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs.length > 0) {
+            const tabId = tabs[0].id;
+            
+            // Inject and execute script in the active tab
+            chrome.scripting.executeScript({
+                target: { tabId: tabId },
+                function: scrapeAndSendText
+            });
+        } else {
+            console.error("No active tab found.");
+        }
+    });
 });
 
-// You can remove this function if not used anymore
+// This function is injected into the tab and scrapes the text
 function scrapeAndSendText() {
-    let textContent = document.body.innerText;
+    const textContent = document.body.innerText;
 
-    // sends the scraped text to the backend
-    fetch(backendURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textContent })
-    })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch(error => console.error('Error:', error));
+    // Send the scraped text to the background script to save it to Google Sheets
+    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedText: textContent });
 }
