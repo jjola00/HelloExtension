@@ -3,6 +3,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       const { scrapedText } = message;
   
       const backendURL = 'https://script.google.com/macros/s/AKfycbxe8dPU_AGKaW9jol8gDQT-nY-JG0DOClPIkiT6TU4oLpw5SsXHgiuenCukGQxX1sXj/exec'; 
+      console.log("backend url", backendURL);
   
       // Send the scraped text to Google Sheets via the backend URL
       fetch(backendURL, {
@@ -15,6 +16,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch(error => sendResponse({ success: false, error }));
   
       // Indicate that we'll respond asynchronously
+      console.log("background.js: sending response");
       return true;
     }
   });
