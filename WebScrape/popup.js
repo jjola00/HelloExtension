@@ -1,28 +1,36 @@
-document.getElementById('scrapeButton').addEventListener('click', () => {
-    console.log("scrapeButton clicked");
-    // Get the active tab
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs.length > 0) {
-        const tabId = tabs[0].id;
-        console.log("tabId", tabId);
-  
-        // Inject and execute script in the active tab to scrape text
-        chrome.scripting.executeScript({
-          target: { tabId: tabId },
-          function: scrapeAndSendText
-        });
-      } else {
-        console.error("No active tab found.");
-      }
-    });
-  });
-  
-  //function is injected into the tab and scrapes the text
-  function scrapeAndSendText() {
+function scrapeAndSendText() {
+  try {
     const textContent = document.body.innerText;
-    console.log("textContent", textContent);
-  
-    // Send the scraped text to the background script to save it
+    
+    // sends scraped text to background script
     chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedText: textContent });
+
+    return {
+      message: "Scraping completed",
+      textLength: textContent.length,
+      firstFewChars: textContent.substring(0, 50)
+    };
+  } catch (error) {
+    return { error: error.message };
   }
-  
+}
+
+document.getElementById('scrapeButton').addEventListener('click', () => {
+  //gets active tab
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length > 0) {
+      chrome.scripting.executeScript({
+        target: { tabId: tabs[0].id },
+        function: scrapeAndSendText
+      }, (injectionResults) => {
+        if (chrome.runtime.lastError) {
+          console.error("Script injection failed:", chrome.runtime.lastError.message);
+        } else {
+          console.log("Scraping results:", injectionResults[0].result);
+        }
+      });
+    } else {
+      console.error("No active tab found.");
+    }
+  });
+});
