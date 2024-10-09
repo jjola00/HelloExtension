@@ -1,14 +1,27 @@
 function scrapeAndSendText() {
   try {
-    const textContent = document.body.innerText;
-    
-    // sends scraped text to background script
-    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedText: textContent });
+    const name = document.querySelector('h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words')?.innerText || 'N/A';
+    const title = document.querySelector('.text-body-medium.break-words')?.innerText || 'N/A';
+    const companyElement = document.querySelector('button[aria-label^="Current company:"] span.text-body-small.t-black');
+    const company = companyElement ? companyElement.innerText : 'N/A';
+    const college = document.querySelector('.artdeco-list-item .optional-action-target-wrapper span[aria-hidden="true"]')?.innerText || 'N/A';
+    const linkedinURL = window.location.href || 'N/A'; 
 
+    console.log("This is the scraped data:", { name, title, company, college, linkedinURL });
+
+    const scrapedData = {
+      name,  
+      title,  
+      company,
+      college,
+      linkedinURL
+    };
+
+    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedData }); 
+    
     return {
-      message: "Scraping completed",
-      textLength: textContent.length,
-      firstFewChars: textContent.substring(0, 50)
+      message: 'Scraping successful',
+      data: scrapedData
     };
   } catch (error) {
     return { error: error.message };
@@ -16,7 +29,6 @@ function scrapeAndSendText() {
 }
 
 document.getElementById('scrapeButton').addEventListener('click', () => {
-  //gets active tab
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
       chrome.scripting.executeScript({

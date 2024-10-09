@@ -1,18 +1,30 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveToGoogleSheets') {
-    const backendURL = 'https://script.google.com/macros/s/AKfycby30T1Cw79TDIoNCHM_ZZfmeXaC2y_iVDWvtUMtHXT0JGQLECITsIbVTQPf8Jelly4j/exec';
+    const backendURL = 'https://script.google.com/macros/s/AKfycbzinAUki77mW0GYrVSouxAiJUlwnKDgC1o_VnyxAhRBWQHHeA1zzSrC28u8sWZ1x6Y8/exec';
 
-    // Send the scraped text to Google Sheets via the backend URL
+    const payload = {
+      name: message.scrapedData.name || 'N/A',
+      title: message.scrapedData.title || 'N/A',
+      company: message.scrapedData.company || 'N/A',
+      college: message.scrapedData.college || 'N/A',
+      linkedinURL: message.scrapedData.linkedinURL || 'N/A'
+    };
+
     fetch(backendURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: message.scrapedText }),
+      body: JSON.stringify(payload),
     })
     .then(response => response.json())
-    .then(data => sendResponse({ success: true, data }))
-    .catch(error => sendResponse({ success: false, error: error.toString() }));
+    .then(data => {
+      console.log("Response from Google Sheets:", data);
+      sendResponse({ success: true, data });
+    })
+    .catch(error => {
+      console.error("Error sending data to Google Sheets:", error);
+      sendResponse({ success: false, error: error.toString() });
+    });
 
-    // Indicate that we'll respond asynchronously
     return true;
   }
 });
