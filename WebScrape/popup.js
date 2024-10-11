@@ -4,21 +4,40 @@ function scrapeAndSendText() {
     const title = document.querySelector('.text-body-medium.break-words')?.innerText || 'N/A';
     const companyElement = document.querySelector('button[aria-label^="Current company:"] span.text-body-small.t-black');
     const company = companyElement ? companyElement.innerText : 'N/A';
-    const college = document.querySelector('.artdeco-list-item .optional-action-target-wrapper span[aria-hidden="true"]')?.innerText || 'N/A';
-    const linkedinURL = window.location.href || 'N/A'; 
+    const college = document.querySelector('#education').closest('section');
+    const linkedinURL = window.location.href || 'N/A';
 
-    console.log("This is the scraped data:", { name, title, company, college, linkedinURL });
+    const experienceSection = document.querySelector('#experience').closest('section'); 
+    const experienceItems = experienceSection ? experienceSection.querySelectorAll('li.artdeco-list__item') : [];
+
+    let experiences = [];
+    
+    //loop to get each entry
+    experienceItems.forEach((item) => {
+      const position = item.querySelector('.t-bold span[aria-hidden="true"]')?.innerText || 'N/A';
+      const company = item.querySelector('.t-14 span[aria-hidden="true"]')?.innerText || 'N/A';
+      const duration = item.querySelector('.t-black--light span[aria-hidden="true"]')?.innerText || 'N/A';
+
+      if (position !== 'N/A' || company !== 'N/A') { // only add if position and company are not N/A
+        experiences.push({
+          position,
+          company,
+          duration
+        });
+      }
+    });
 
     const scrapedData = {
-      name,  
-      title,  
+      name,
+      title,
       company,
       college,
-      linkedinURL
+      linkedinURL,
+      experiences
     };
 
-    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedData }); 
-    
+    console.log('Scraped data:', scrapedData);
+    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedData });
     return {
       message: 'Scraping successful',
       data: scrapedData
