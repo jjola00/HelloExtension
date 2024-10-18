@@ -71,7 +71,7 @@ console.log("Background script loaded");chrome.runtime.onMessage.addListener((me
   }
 });
 
-// Save to Google Sheets logic (unchanged)
+// Save to Google Sheets logic 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveToGoogleSheets') {
     const backendURL = 'https://script.google.com/macros/s/AKfycbwRJgejti-nOu16fFt_cz8gmwVu3XRDZnKdP1g8xQkTZjHCq_9814QxK2WM9s_oo0kY/exec';
