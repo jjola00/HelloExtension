@@ -1,4 +1,47 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+function scrapeAndSendText() {
+  try {
+    const name = document.querySelector('h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words')?.innerText || 'N/A';
+    const title = document.querySelector('.text-body-medium.break-words')?.innerText || 'N/A';
+    const companyElement = document.querySelector('button[aria-label^="Current company:"] span.text-body-small.t-black');
+    const company = companyElement ? companyElement.innerText : 'N/A';
+    const collegeSection = document.querySelector('#education')?.closest('section');
+    const college = collegeSection ? collegeSection.querySelector('.mr1.hoverable-link-text.t-bold span[aria-hidden="true"]')?.innerText || 'N/A' : 'N/A';
+    const linkedinURL = window.location.href || 'N/A';
+    const experienceSection = document.querySelector('#experience')?.closest('section');
+    const experienceItems = experienceSection ? experienceSection.querySelectorAll('li.artdeco-list__item') : [];
+    
+    let experiences = [];
+    experienceItems.forEach((item) => {
+      const position = item.querySelector('.t-bold span[aria-hidden="true"]')?.innerText || 'N/A';
+      const company = item.querySelector('.t-14 span[aria-hidden="true"]')?.innerText || 'N/A';
+      const duration = item.querySelector('.t-black--light span[aria-hidden="true"]')?.innerText || 'N/A';
+      if (position !== 'N/A' || company !== 'N/A') {
+        experiences.push({ position, company, duration });
+      }
+    });
+
+    const scrapedData = {
+      name,
+      title,
+      company,
+      college,
+      linkedinURL,
+      experiences,
+    };
+
+    console.log('Scraped data:', scrapedData);
+    chrome.runtime.sendMessage({ action: 'saveToGoogleSheets', scrapedData });
+    return {
+      message: 'Scraping successful',
+      data: scrapedData
+    };
+  } catch (error) {
+    console.error('Scraping error:', error.message);
+    return { error: error.message };
+  }
+}
+
+console.log("Background script loaded");chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'navigateToProfiles') {
     const profilesToScrape = message.connections;
 
@@ -10,26 +53,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           setTimeout(() => {
             chrome.scripting.executeScript({
               target: { tabId: sender.tab.id },
-              files: ['popup.js'] // Inject popup.js, which contains scrapeAndSendText
-            }, () => {
-              chrome.scripting.executeScript({
-                target: { tabId: sender.tab.id },
-                function: scrapeAndSendText // Now we can call scrapeAndSendText
-              });
+              function: scrapeAndSendText // Injecting scrapeAndSendText directly
+            }, (result) => {
+              if (chrome.runtime.lastError) {
+                console.error("Script injection failed:", chrome.runtime.lastError.message);
+              } else {
+                console.log('Scraping result:', result);
+              }
             });
-          }, 3000); // Adjust delay for page load time
+          }, 3000); // Delay to ensure the page is fully loaded
         });
       }, index * 10000); // Stagger profile visits by 10 seconds
     });
 
     sendResponse({ success: true });
-    return true; // Keeps the message channel open for async response
+    return true; 
   }
 });
 
+// Save to Google Sheets logic (unchanged)
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'saveToGoogleSheets') {
-    const backendURL = 'https://script.google.com/macros/s/AKfycby30T1Cw79TDIoNCHM_ZZfmeXaC2y_iVDWvtUMtHXT0JGQLECITsIbVTQPf8Jelly4j/exec';
+    const backendURL = 'https://script.google.com/macros/s/AKfycbx7d0tE1yYlqI_69Yu8EOofnRo41x7-7zCyxGaegFxCVK8WlHGY0mirrT8CeejFcHx7/exec';
 
     const payload = {
       name: message.scrapedData.name || 'N/A',
@@ -55,7 +100,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({ success: false, error: error.toString() });
     });
 
-    return true; // Ensures asynchronous handling
+    return true; 
   }
 });
 
