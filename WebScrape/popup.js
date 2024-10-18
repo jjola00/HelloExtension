@@ -1,3 +1,4 @@
+//popup.js
 function scrapeAndSendText() {
   try {
     const name = document.querySelector('h1.text-heading-xlarge.inline.t-24.v-align-middle.break-words')?.innerText || 'N/A'
