@@ -71,37 +71,35 @@ console.log("Background script loaded");chrome.runtime.onMessage.addListener((me
   }
 });
 
-// Save to Google Sheets logic 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'saveToGoogleSheets') {
-    const backendURL = 'https://script.google.com/macros/s/AKfycbwRJgejti-nOu16fFt_cz8gmwVu3XRDZnKdP1g8xQkTZjHCq_9814QxK2WM9s_oo0kY/exec';
+  if (message.action === 'navigateToProfiles') {
+    const profilesToScrape = message.connections;
 
-    const payload = {
-      name: message.scrapedData.name || 'N/A',
-      title: message.scrapedData.title || 'N/A',
-      company: message.scrapedData.company || 'N/A',
-      college: message.scrapedData.college || 'N/A',
-      linkedinURL: message.scrapedData.linkedinURL || 'N/A',
-      experiences: message.scrapedData.experiences || []
-    };
+    profilesToScrape.forEach((profileURL, index) => {
+      setTimeout(() => {
+        chrome.tabs.update(sender.tab.id, { url: profileURL }, () => {
+          console.log('Navigated to connections page: ' + profileURL);
 
-    fetch(backendURL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Response from Google Sheets:", data);
-      sendResponse({ success: true, data });
-    })
-    .catch(error => {
-      console.error("Error sending data to Google Sheets:", error);
-      sendResponse({ success: false, error: error.toString() });
+          setTimeout(() => {
+            chrome.scripting.executeScript({
+              target: { tabId: sender.tab.id },
+              function: scrapeAndSendText // Modify this to handle connection page scraping
+            }, (result) => {
+              if (chrome.runtime.lastError) {
+                console.error("Script injection failed:", chrome.runtime.lastError.message);
+              } else {
+                console.log('Scraping result:', result);
+              }
+            });
+          }, 3000); // Delay to ensure the page is fully loaded
+        });
+      }, index * 10000); // Stagger profile visits by 10 seconds
     });
 
-    return true; 
+    sendResponse({ success: true });
+    return true;
   }
 });
+
 
 console.log("Background script loaded");
