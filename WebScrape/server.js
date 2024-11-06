@@ -1,18 +1,15 @@
-//server.js
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const express = require('express')
+const axios = require('axios')
+const cors = require('cors')
 
-const app = express();
-const PORT = 3000;
+const app = express()
+const PORT = 3000
 
-// Middleware
-app.use(cors()); // Enable CORS for all origins
-app.use(express.json()); // Parse JSON request bodies
+app.use(cors())
+app.use(express.json())
 
-// POST route for sending data to Notion
 app.post('/sendToNotion', async (req, res) => {
-  const { notionToken, databaseId, profileData } = req.body;
+  const { notionToken, databaseId, profileData } = req.body
 
   try {
     const response = await axios.post(
@@ -21,7 +18,7 @@ app.post('/sendToNotion', async (req, res) => {
         parent: { database_id: databaseId },
         properties: {
           'Name': { type: 'title', title: [{ text: { content: profileData.name } }] },
-          'URL': { type: 'url', url: profileData.url },
+          'Profile link': { type: 'url', url: profileData.url },
         },
       },
       {
@@ -33,14 +30,13 @@ app.post('/sendToNotion', async (req, res) => {
       }
     );
 
-    res.status(200).json(response.data); // Send Notion response data back to the client
+    console.log('Notion Response:', response.data)
+    res.status(200).json(response.data)
   } catch (error) {
-    console.error("Error sending data to Notion:", error);
-    res.status(500).json({ error: "Failed to send data to Notion" });
+    console.error("Error sending data to Notion:", error.response ? error.response.data : error.message)
+    res.status(500).json({ error: "Failed to send data to Notion" })
   }
-});
-
-// Start the server
+})
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+  console.log(`Server running on http://localhost:${PORT}`)
+})
