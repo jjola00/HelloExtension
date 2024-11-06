@@ -17,8 +17,7 @@ app.post('/sendToNotion', async (req, res) => {
       {
         parent: { database_id: databaseId },
         properties: {
-          'Name': { type: 'title', title: [{ text: { content: profileData.name } }] },
-          'Profile link': { type: 'url', url: profileData.url },
+          'Profile link': { type: 'url', url: profileData.url }
         },
       },
       {

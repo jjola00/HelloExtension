@@ -14,7 +14,7 @@ document.getElementById('scrapeButton').addEventListener('click', () => {
       chrome.runtime.sendMessage(
         {
           action: 'sendProfileToNotion',
-          profileData: { url: tabs[0].url, name: "Profile Name" } 
+          profileData: { url: tabs[0].url, name: "Profile Namesss" } 
         },
         (response) => {
           if (chrome.runtime.lastError) {
