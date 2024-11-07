@@ -1,10 +1,9 @@
+// server.js
 const express = require('express')
 const axios = require('axios')
 const cors = require('cors')
-
 const app = express()
 const PORT = 3000
-
 app.use(cors())
 app.use(express.json())
 
@@ -27,8 +26,7 @@ app.post('/sendToNotion', async (req, res) => {
           'Notion-Version': '2022-06-28',
         },
       }
-    );
-
+    )
     console.log('Notion Response:', response.data)
     res.status(200).json(response.data)
   } catch (error) {

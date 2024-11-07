@@ -1,4 +1,4 @@
-//background.js
+// background.js
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'sendProfileToNotion') {
     const profileData = message.profileData
@@ -6,14 +6,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     fetch(proxyURL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         notionToken: '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',
         databaseId: '136c9e86-87b8-8035-a8bf-f9fe34b7a2f7',
-        profileData: profileData,
-      }),
+        profileData: profileData
+      })
     })
     .then(response => response.json())
     .then(data => {
