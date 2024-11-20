@@ -1,3 +1,4 @@
+//clearDB.js
 const axios = require('axios')
 
 const notionToken = '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'
@@ -22,7 +23,6 @@ async function getDatabaseEntries() {
   }
 }
 
-// Deletes a single page
 async function deletePage(pageId) {
   try {
     await notion.patch(`pages/${pageId}`, { archived: true })

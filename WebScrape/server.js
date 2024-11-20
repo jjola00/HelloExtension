@@ -7,6 +7,37 @@ const PORT = 4000
 app.use(cors())
 app.use(express.json())
 
+app.post('/clearDatabase', async (req, res) => {
+  const { notionToken, databaseId } = req.body;
+
+  const notion = axios.create({
+    baseURL: 'https://api.notion.com/v1/',
+    headers: {
+      'Authorization': `Bearer ${notionToken}`,
+      'Notion-Version': '2022-06-28',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  try {
+    // Retrieve all entries
+    const response = await notion.post(`databases/${databaseId}/query`);
+    const pages = response.data.results;
+
+    // Archive each page
+    for (const page of pages) {
+      await notion.patch(`pages/${page.id}`, { archived: true });
+    }
+
+    console.log('Database cleared.');
+    res.status(200).json({ success: true, message: 'Database cleared.' });
+  } catch (error) {
+    console.error('Error clearing database:', error.response ? error.response.data : error.message);
+    res.status(500).json({ success: false, error: 'Failed to clear database.' });
+  }
+});
+
+
 app.post('/sendToNotion', async (req, res) => {
   const { notionToken, databaseId, profileData } = req.body
 
