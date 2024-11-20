@@ -2,7 +2,7 @@
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'sendProfileToNotion') {
     const profileData = message.profileData
-    const proxyURL = 'http://localhost:3000/sendToNotion'
+    const proxyURL = 'http://localhost:4000/sendToNotion'
 
     fetch(proxyURL, {
       method: 'POST',

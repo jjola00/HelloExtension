@@ -35,7 +35,7 @@ function scrapeConnections() {
             console.log("Regex: ", regex)
             console.log("Filtered Titles: ", filteredTitles)
 
-            const profileLinks = Array.from(document.querySelectorAll('a.app-aware-link'))
+            const profileLinks = Array.from(document.querySelectorAll('a[href*="/in/"]'))
               .map((link) => link.href)
               .filter((href) => href.includes("linkedin.com/in/"))
             return { profileLinks, filteredTitles }
