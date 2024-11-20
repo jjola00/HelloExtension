@@ -1,6 +1,5 @@
 //clearDB.js
 const axios = require('axios')
-
 const notionToken = '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'
 const databaseId = '136c9e86-87b8-8035-a8bf-f9fe34b7a2f7'
 
@@ -32,7 +31,6 @@ async function deletePage(pageId) {
   }
 }
 
-// Clears database
 async function clearDatabase() {
   const pages = await getDatabaseEntries()
   for (const page of pages) {

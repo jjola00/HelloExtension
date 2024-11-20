@@ -1,9 +1,8 @@
 // background.js
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'sendProfileToNotion') {
-    const profileData = message.profileData;
-    const proxyURL = 'http://localhost:4000/sendToNotion';
+    const profileData = message.profileData
+    const proxyURL = 'http://localhost:4000/sendToNotion'
 
     fetch(proxyURL, {
       method: 'POST',
@@ -16,19 +15,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("Profile URL sent to Notion:", data);
-        sendResponse({ success: true, data });
+        console.log("Profile URL sent to Notion:", data)
+        sendResponse({ success: true, data })
       })
       .catch(error => {
-        console.error("Error sending URL to Notion:", error);
-        sendResponse({ success: false, error: error.toString() });
-      });
+        console.error("Error sending URL to Notion:", error)
+        sendResponse({ success: false, error: error.toString() })
+      })
 
-    return true; // Indicate asynchronous response
+    return true
   }
 
   if (message.action === 'clearDatabase') {
-    const proxyURL = 'http://localhost:4000/clearDatabase';
+    const proxyURL = 'http://localhost:4000/clearDatabase'
 
     fetch(proxyURL, {
       method: 'POST',
@@ -40,8 +39,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })
       .then(response => response.json())
       .then(data => sendResponse({ success: true, data }))
-      .catch(error => sendResponse({ success: false, error: error.toString() }));
+      .catch(error => sendResponse({ success: false, error: error.toString() }))
 
-    return true; // Indicate asynchronous response
+    return true
   }
-});
+})
