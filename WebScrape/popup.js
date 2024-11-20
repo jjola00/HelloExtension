@@ -1,4 +1,11 @@
-// popup.js
+//popup.js
+const profileRange = document.getElementById('profileRange')
+const rangeValue = document.getElementById('rangeValue')
+
+profileRange.addEventListener('input', () => {
+  rangeValue.textContent = profileRange.value
+})
+
 function openConnectionsPage() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
@@ -22,6 +29,8 @@ function openConnectionsPage() {
 
 function scrapeConnections() {
   const titleRegex = "student"
+  const numberOfProfiles = parseInt(profileRange.value)
+
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     if (tabs.length > 0) {
       chrome.scripting.executeScript(
@@ -44,8 +53,7 @@ function scrapeConnections() {
         },
         (results) => {
           let profileUrls = results[0].result.profileLinks
-          profileUrls = profileUrls.slice(0, 2) 
-
+          profileUrls = profileUrls.slice(0, numberOfProfiles)
           if (profileUrls.length > 0) {
             profileUrls.forEach((profileURL) => {
               chrome.runtime.sendMessage({ action: 'sendProfileToNotion', profileData: { url: profileURL } })
