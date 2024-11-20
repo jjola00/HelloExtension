@@ -4,11 +4,125 @@
   <meta charset="UTF-8">
   <title>LinkedIn Connection Navigator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+      width: 300px;
+      height: 400px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      width: 100%;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .input-group input[type="text"] {
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .slider-container {
+      width: 100%;
+      text-align: center;
+      font-size: 0.9em;
+    }
+
+    .slider {
+      width: 100%;
+    }
+
+    button {
+      padding: 12px;
+      font-size: 1em;
+      color: white;
+      background-color: #0073b1;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      margin: 10px 0;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #005582;
+    }
+
+    .bottom-buttons {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .bottom-buttons button {
+      padding: 8px;
+      width: 48%;
+      font-size: 0.9em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .icon {
+      margin-left: 8px;
+      font-size: 1.2em;
+    }
+
+  </style>
 </head>
 <body>
   <h1>LinkedIn Connection Navigator</h1>
-  <button id="openConnectionsButton">Open Connections</button>
+
+  <!-- Search Filter Input -->
+  <div class="input-group">
+    <input type="text" id="searchFilter" placeholder="Enter search filter, e.g. 'Engineer'">
+  </div>
+
+  <!-- Slider for number of profiles returned -->
+  <div class="slider-container">
+    <span>Number of profiles returned</span>
+    <input type="range" min="1" max="10" value="1" class="slider" id="profileRange">
+    <span id="rangeValue">1</span>
+  </div>
+
+  <!-- Scrape Connections Button -->
   <button id="scrapeButton">Scrape Connections</button>
+
+  <!-- Open Connections Button -->
+  <button id="openConnectionsButton">Open Connections</button>
+
+  <!-- Bottom buttons for view spreadsheet and delete all entries -->
+  <div class="bottom-buttons">
+    <button id="viewSpreadsheet">
+      View Spreadsheet
+    </button>
+    <button id="deleteAll" style="background-color: #e74c3c;">
+      <span>Delete All</span>
+      <span class="icon">🗑️</span>
+    </button>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>
