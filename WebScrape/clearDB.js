@@ -25,7 +25,6 @@ async function getDatabaseEntries() {
 async function deletePage(pageId) {
   try {
     await notion.patch(`pages/${pageId}`, { archived: true })
-    console.log(`Deleted page with ID: ${pageId}`)
   } catch (error) {
     console.error(`Error deleting page ${pageId}:`, error.response ? error.response.data : error.message)
   }
@@ -36,6 +35,5 @@ async function clearDatabase() {
   for (const page of pages) {
     await deletePage(page.id)
   }
-  console.log('Database cleared.')
 }
 clearDatabase()

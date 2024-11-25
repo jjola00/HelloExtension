@@ -25,7 +25,6 @@ app.post('/clearDatabase', async (req, res) => {
     for (const page of pages) {
       await notion.patch(`pages/${page.id}`, { archived: true })
     }
-    console.log('Database cleared.')
     res.status(200).json({ success: true, message: 'Database cleared.' })
   } catch (error) {
     console.error('Error clearing database:', error.response ? error.response.data : error.message)
@@ -54,7 +53,6 @@ app.post('/sendToNotion', async (req, res) => {
         },
       }
     )
-    console.log('Notion Response:', response.data)
     res.status(200).json(response.data)
   } catch (error) {
     console.error("Error sending data to Notion:", error.response ? error.response.data : error.message)

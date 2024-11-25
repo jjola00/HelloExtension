@@ -28,7 +28,8 @@ function openConnectionsPage() {
 }
 
 function scrapeConnections() {
-  const titleRegex = "student"
+  const titleRegex = document.getElementById('searchFilter')
+  console.log("Title regex:", titleRegex.value)
   const numberOfProfiles = parseInt(profileRange.value)
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -40,10 +41,6 @@ function scrapeConnections() {
             const titles = Array.from(document.querySelectorAll('.entity-result__primary-subtitle'))
               .map((element) => element.innerText.trim().toLowerCase())
             const filteredTitles = titles.filter((title) => title.includes(regex.toLowerCase()))
-            console.log("All Titles: ", titles)
-            console.log("Regex: ", regex)
-            console.log("Filtered Titles: ", filteredTitles)
-
             const profileLinks = Array.from(document.querySelectorAll('a[href*="/in/"]'))
               .map((link) => link.href)
               .filter((href) => href.includes("linkedin.com/in/"))

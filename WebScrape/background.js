@@ -15,7 +15,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("Profile URL sent to Notion:", data)
         sendResponse({ success: true, data })
       })
       .catch(error => {
